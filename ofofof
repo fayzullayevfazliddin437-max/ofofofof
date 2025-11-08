@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastShop - Fast Food Yetkazib Berish</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center font-sans">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-red-600">FastShop</h1>
+            <p class="text-gray-600">Tez va mazali taomlar yetkazib berish xizmati</p>
+        </div>
+
+        <div class="mb-4">
+            <label for="nameInput" class="block text-sm font-medium text-gray-700">Ismingiz:</label>
+            <input type="text" id="nameInput" placeholder="Ismingizni yozing" 
+                   class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Taomni tanlang:</label>
+            <div class="grid grid-cols-1 gap-2 mt-2">
+                <div class="flex items-center p-2 border rounded-md hover:bg-gray-50">
+                    <input type="checkbox" id="burger" value="Burger" class="mr-2">
+                    <label for="burger">Burger - 25,000 UZS</label>
+                </div>
+                <div class="flex items-center p-2 border rounded-md hover:bg-gray-50">
+                    <input type="checkbox" id="pizza" value="Pizza" class="mr-2">
+                    <label for="pizza">Pizza - 50,000 UZS</label>
+                </div>
+                <div class="flex items-center p-2 border rounded-md hover:bg-gray-50">
+                    <input type="checkbox" id="fries" value="Fries" class="mr-2">
+                    <label for="fries">Fries - 15,000 UZS</label>
+                </div>
+                <div class="flex items-center p-2 border rounded-md hover:bg-gray-50">
+                    <input type="checkbox" id="drink" value="Drink" class="mr-2">
+                    <label for="drink">Ichimlik - 10,000 UZS</label>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="sendOrder()" 
+                class="w-full bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition duration-200">
+            Buyurtma berish
+        </button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+
+        tg.ready();
+        tg.expand();
+
+        function sendOrder() {
+            const name = document.getElementById("nameInput").value.trim();
+            if (name.length < 2 || name.length > 50) {
+                tg.showAlert("Ism 2 dan 50 gacha belgi bo'lishi kerak!");
+                return;
+            }
+
+            const selectedItems = [];
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => selectedItems.push(checkbox.value));
+
+            if (selectedItems.length === 0) {
+                tg.showAlert("Kamida bitta taom tanlang!");
+                return;
+            }
+
+            const orderData = {
+                name: name,
+                items: selectedItems
+            };
+
+            tg.sendData(JSON.stringify(orderData));
+            tg.close();
+        }
+    </script>
+</body>
+</html>
